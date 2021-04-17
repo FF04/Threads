@@ -13,41 +13,35 @@ namespace Threads
         {
             //https://www.youtube.com/watch?v=hOVSKuFTUiI
 
-            BankAcc acc = new BankAcc(10);
-            Thread[] threads = new Thread[15];
-
-            Thread.CurrentThread.Name = "main";
-
-            for (int i = 0; i < threads.Length; i++)
-            {
-                threads[i] = new Thread(new ThreadStart(acc.IssueWithdraw));
-
-                threads[i].Name = i.ToString();
-
-           
-            }
 
 
+            // So übergibt man Inputparameter mit (() => Lambdas)
+            Thread t = new Thread(() => CountTo(10));
 
-            for (int i = 0; i < threads.Length; i++)
+            t.Start();
+
+            new Thread(() => 
             {
 
+                CountTo(5);
+                CountTo(6);
 
-                threads[i].Start();
-
-                Console.WriteLine("Thread {0} Alive : {1}", threads[i].Name, threads[i].IsAlive);
-
-            }
+            }).Start();
 
 
-            Console.WriteLine("Current Priotity : {0}", Thread.CurrentThread.Priority);
-
-
-            Console.WriteLine($"Thread {Thread.CurrentThread.Name} Ending");
             Console.ReadLine();
 
         }
 
+
+        static void CountTo(int maxNum)
+        {
+            for (int i = 0; i < maxNum; i++)
+            {
+                Thread.Sleep(1);
+                Console.WriteLine(i);
+            }
+        }
 
         // Printet nur 1
         static void Print1()
