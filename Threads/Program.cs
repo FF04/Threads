@@ -11,24 +11,41 @@ namespace Threads
     {
         static void Main(string[] args)
         {
+            //https://www.youtube.com/watch?v=hOVSKuFTUiI
 
-            // erzeugung eines Threads
-            Thread t = new Thread(Print1); // zuweisung der Methode Print1()  (keine Klammern da ja kein ergebnis rein soll)
-            t.Start(); // Einmaliger start
+            BankAcc acc = new BankAcc(10);
+            Thread[] threads = new Thread[15];
 
-            // printet nur 0
-            for (int i = 0; i < 1000; i++)
+            Thread.CurrentThread.Name = "main";
+
+            for (int i = 0; i < threads.Length; i++)
             {
-                Console.Write(0);
+                threads[i] = new Thread(new ThreadStart(acc.IssueWithdraw));
+
+                threads[i].Name = i.ToString();
+
+           
             }
 
 
-            // Das Ergebnis: es werden 0er und 1er abwechselnd ausegeben!
+
+            for (int i = 0; i < threads.Length; i++)
+            {
 
 
+                threads[i].Start();
+
+                Console.WriteLine("Thread {0} Alive : {1}", threads[i].Name, threads[i].IsAlive);
+
+            }
 
 
+            Console.WriteLine("Current Priotity : {0}", Thread.CurrentThread.Priority);
+
+
+            Console.WriteLine($"Thread {Thread.CurrentThread.Name} Ending");
             Console.ReadLine();
+
         }
 
 
@@ -45,4 +62,53 @@ namespace Threads
 
 
     }
+
+
+    class BankAcc
+    {
+        public Object accLock = new object();
+        public double Balance { get; set; }
+
+        public BankAcc(double bal)
+        {
+            Balance = bal;
+        }
+
+
+        public double Withdraw(double atm)
+        {
+            if ((Balance-atm)<0)
+            {
+                Console.WriteLine($"Sorry {Balance} in Account");
+                return Balance;
+            }
+
+            // verhindert das andere threads hier rein kommen (der code in lock kann dann nicht ausgeführt werden)
+            lock (accLock) // Wenn dieses lock nicht da wäre, könnten 2 Threads gleichzeitig die variable verändern - so das man zu einem negativen kontostand kommt!!
+            {
+                if (Balance>=atm)
+                {
+                    Console.WriteLine("Removed {0} and {1} left in Account", atm, (Balance-atm));
+                    Balance -= atm;
+                }
+                return Balance;
+            }
+
+
+
+        }
+
+
+
+        public void IssueWithdraw()
+        {
+
+            Withdraw(1);
+
+        }
+
+
+    }
+
+
 }
