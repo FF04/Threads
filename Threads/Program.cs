@@ -29,10 +29,22 @@ namespace Threads
             }).Start();
 
 
+
+
+            // oder man übergibt beim start die parameter (man kann dann áber immer nur 1 Objekt übergeben!)
+            Thread t2 = new Thread(CountTo);
+            t2.Start(4);
+
+
+
             Console.ReadLine();
 
         }
 
+        private static void CountTo(object obj)
+        {
+            Console.WriteLine(obj?.ToString());
+        }
 
         static void CountTo(int maxNum)
         {
