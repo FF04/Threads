@@ -9,112 +9,42 @@ namespace Threads
 {
     class Program
     {
+
+
         static void Main(string[] args)
         {
-            //https://www.youtube.com/watch?v=hOVSKuFTUiI
+            // https://www.youtube.com/watch?v=XXg9g56FS0k
+
+
+            Console.WriteLine("Hello World");
 
 
 
-            // So übergibt man Inputparameter mit (() => Lambdas)
-            Thread t = new Thread(() => CountTo(10));
-
-            t.Start();
-
-            new Thread(() => 
+            // Diese Threads warten alle Parallel 1 sec und schreiben dann gleichzeitig den Text
+           new Thread(() =>
             {
-
-                CountTo(5);
-                CountTo(6);
-
+                Thread.Sleep(1000);
+                Console.WriteLine("This is a new thread 1");
+            }).Start();
+            
+           new Thread(() =>
+            {
+                Thread.Sleep(1000);
+                Console.WriteLine("This is a new thread 2");
+            }).Start();
+          
+           new Thread(() =>
+            {
+                Thread.Sleep(1000);
+                Console.WriteLine("This is a new thread 3");
             }).Start();
 
 
 
 
-            // oder man übergibt beim start die parameter (man kann dann áber immer nur 1 Objekt übergeben!)
-            Thread t2 = new Thread(CountTo);
-            t2.Start(4);
-
-
 
             Console.ReadLine();
-
         }
-
-        private static void CountTo(object obj)
-        {
-            Console.WriteLine(obj?.ToString());
-        }
-
-        static void CountTo(int maxNum)
-        {
-            for (int i = 0; i < maxNum; i++)
-            {
-                Thread.Sleep(1);
-                Console.WriteLine(i);
-            }
-        }
-
-        // Printet nur 1
-        static void Print1()
-        {
-            for (int i = 0; i < 1000; i++)
-            {
-                Console.Write(1);
-            }
-
-
-        }
-
-
     }
-
-
-    class BankAcc
-    {
-        public Object accLock = new object();
-        public double Balance { get; set; }
-
-        public BankAcc(double bal)
-        {
-            Balance = bal;
-        }
-
-
-        public double Withdraw(double atm)
-        {
-            if ((Balance-atm)<0)
-            {
-                Console.WriteLine($"Sorry {Balance} in Account");
-                return Balance;
-            }
-
-            // verhindert das andere threads hier rein kommen (der code in lock kann dann nicht ausgeführt werden)
-            lock (accLock) // Wenn dieses lock nicht da wäre, könnten 2 Threads gleichzeitig die variable verändern - so das man zu einem negativen kontostand kommt!!
-            {
-                if (Balance>=atm)
-                {
-                    Console.WriteLine("Removed {0} and {1} left in Account", atm, (Balance-atm));
-                    Balance -= atm;
-                }
-                return Balance;
-            }
-
-
-
-        }
-
-
-
-        public void IssueWithdraw()
-        {
-
-            Withdraw(1);
-
-        }
-
-
-    }
-
 
 }
